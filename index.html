@@ -128,7 +128,6 @@
     </style>
 </head>
 <body>
-
 <div id="app-container">
     <header>
         <button class="back-btn" id="backBtn" onclick="goBack()">&#8592;</button>
@@ -155,12 +154,12 @@
 
         <div id="page-lend" class="page">
             <div class="list-container" id="lend-list"></div>
-            <button class="fab" onclick="openModal('New Person')">+</button>
+            <button class="fab" onclick="openModal('Add Entry')">+</button>
         </div>
 
         <div id="page-borrow" class="page">
             <div class="list-container" id="borrow-list"></div>
-            <button class="fab" onclick="openModal('New Person')">+</button>
+            <button class="fab" onclick="openModal('Add Entry')">+</button>
         </div>
 
         <div id="page-details" class="page">
@@ -170,7 +169,7 @@
             </div>
             <div class="action-buttons">
                 <button class="btn-action btn-return" id="btn-return-action" onclick="openModal('Return Money')">Log Return</button>
-                <button class="btn-action btn-new-entry" onclick="openModal('New Entry')">Add Entry</button>
+                <button class="btn-action btn-new-entry" onclick="openModal('Add Entry')">Add Entry</button>
             </div>
             <div class="list-container">
                 <h4 style="margin-bottom: 10px; color: #636e72;">Transaction History</h4>
@@ -221,9 +220,9 @@
     let historyStack = ['page-home'];
     
     // Tracking current context
-    let currentCategory = '';     // 'lend' or 'borrow'
+    let currentCategory = '';     
     let currentPersonId = null; 
-    let currentAction = '';       // 'New Person', 'New Entry', 'Return Money', 'Edit Entry'
+    let currentAction = '';       
     let editingTransactionId = null;
     let deletingItem = { type: '', personId: null, transId: null };
 
@@ -248,7 +247,6 @@
         return Math.random().toString(36).substr(2, 9);
     }
 
-    // --- Rendering Functions ---
     function renderDashboard() {
         let totalLend = 0, totalBorrow = 0;
 
@@ -295,8 +293,7 @@
         appData[category].forEach(person => {
             const balance = calculatePersonBalance(person);
             const colorClass = category === 'lend' ? 'lend' : 'borrow';
-            
-            listEl.innerHTML += `
+listEl.innerHTML += `
                 <div class="list-item">
                     <div class="list-item-content" onclick="openDetails('${person.id}')">
                         <span class="name">${person.name}</span>
@@ -363,28 +360,51 @@
         });
     }
 
-    // --- Data Saving logic ---
+    // --- Smart Data Saving Logic ---
     function saveData() {
-        const nameInput = document.getElementById('input-name').value.trim();
         const amountInput = parseFloat(document.getElementById('input-amount').value);
         const methodInput = document.getElementById('input-method').value;
         const dateInput = document.getElementById('input-date').value;
 
         if (isNaN(amountInput) || amountInput <= 0) return alert("Enter a valid amount");
 
-        if (currentAction === 'New Person') {
-            if (!nameInput) return alert("Enter a name");
-            appData[currentCategory].push({
+        const isDetailsPage = historyStack[historyStack.length - 1] === 'page-details';
+
+        if (currentAction === 'Add Entry') {
+            let targetPerson;
+            
+            if (isDetailsPage) {
+                // If on detail page, add directly to the viewed person
+                targetPerson = appData[currentCategory].find(p => p.id === currentPersonId);
+            } else {
+                // If on list page, check the name input
+                const nameInput = document.getElementById('input-name').value.trim();
+                if (!nameInput) return alert("Enter a name");
+                
+                // Smart Search: Check if person already exists (case-insensitive)
+                targetPerson = appData[currentCategory].find(p => p.name.toLowerCase() === nameInput.toLowerCase());
+                
+                // If they don't exist, create them
+                if (!targetPerson) {
+                    targetPerson = { id: generateId(), name: nameInput, transactions: [] };
+                    appData[currentCategory].push(targetPerson);
+                }
+            }
+
+            // Push the transaction to the person
+            targetPerson.transactions.push({
                 id: generateId(),
-                name: nameInput,
-                transactions: [{ id: generateId(), type: 'primary', amount: amountInput, date: dateInput, method: methodInput }]
+                type: 'primary',
+                amount: amountInput,
+                date: dateInput,
+                method: methodInput
             });
-        } 
-        else if (currentAction === 'New Entry' || currentAction === 'Return Money') {
+        }
+        else if (currentAction === 'Return Money') {
             const person = appData[currentCategory].find(p => p.id === currentPersonId);
             person.transactions.push({
                 id: generateId(),
-                type: currentAction === 'New Entry' ? 'primary' : 'return',
+                type: 'return',
                 amount: amountInput,
                 date: dateInput,
                 method: methodInput
@@ -402,7 +422,6 @@
         closeModalDirect('action-modal');
     }
 
-    // --- Deletion Logic ---
     function confirmDelete(type, personId, transId, name) {
         deletingItem = { type, personId, transId };
         document.getElementById('delete-text').innerText = `Are you sure you want to delete ${name}?`;
@@ -417,10 +436,9 @@
             person.transactions = person.transactions.filter(t => t.id !== deletingItem.transId);
         }
         saveToStorage();
- closeModalDirect('delete-modal');
+        closeModalDirect('delete-modal');
     }
 
-    // --- UI/Navigation ---
     function navigate(targetId, title) {
         const currentId = historyStack[historyStack.length - 1];
         if(currentId === targetId) return;
@@ -462,7 +480,6 @@
         const modal = document.getElementById('action-modal');
         document.getElementById('modal-title').innerText = actionType;
         
-        // Reset fields
         document.getElementById('input-name').value = '';
         document.getElementById('input-amount').value = '';
         document.getElementById('input-date').valueAsDate = new Date();
@@ -473,15 +490,19 @@
         submitBtn.className = 'btn-submit';
         submitBtn.innerText = 'Save Details';
 
-        if(actionType === 'New Person') {
-            nameGroup.style.display = 'block';
-        } else {
+        const isDetailsPage = historyStack[historyStack.length - 1] === 'page-details';
+
+        if (actionType === 'Add Entry') {
+            nameGroup.style.display = isDetailsPage ? 'none' : 'block';
+        } else if (actionType === 'Edit Entry') {
             nameGroup.style.display = 'none';
-            if(actionType === 'Return Money') {
-                submitBtn.className = 'btn-submit return';
-                submitBtn.innerText = 'Confirm Return';
-            }
+            submitBtn.innerText = 'Update Entry';
+        } else if (actionType === 'Return Money') {
+            nameGroup.style.display = 'none';
+            submitBtn.className = 'btn-submit return';
+            submitBtn.innerText = 'Confirm Return';
         }
+        
         modal.classList.add('active');
     }
 
@@ -495,7 +516,6 @@
         document.getElementById('input-date').value = t.date;
         
         openModal('Edit Entry');
-        document.getElementById('submit-btn').innerText = 'Update Entry';
     }
 
     function closeModal(event, modalId) {
@@ -506,7 +526,6 @@
         document.getElementById(modalId).classList.remove('active');
     }
 
-    // Run on startup
     init();
 </script>
 
