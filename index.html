@@ -7,20 +7,11 @@
     <style>
         /* --- Base Variables & Setup --- */
         :root {
-            --bg-color: #f8f9fa;
-            --text-main: #2d3436;
-            --text-muted: #636e72;
-            --lend-color: #0984e3;
-            --borrow-color: #d63031;
-            --net-color: #00b894;
-            --card-bg: #ffffff;
-            --border-radius: 16px;
-            --danger: #ff7675;
-            --edit: #74b9ff;
+            --bg-color: #f8f9fa; --text-main: #2d3436; --text-muted: #636e72;
+            --lend-color: #0984e3; --borrow-color: #d63031; --net-color: #00b894;
+            --card-bg: #ffffff; --border-radius: 16px; --danger: #ff7675; --edit: #74b9ff;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-
         body { background-color: #dfe6e9; display: flex; justify-content: center; height: 100vh; overflow: hidden; color: var(--text-main); }
 
         /* --- Mobile App Container --- */
@@ -62,7 +53,6 @@
             box-shadow: 0 8px 16px rgba(0, 184, 148, 0.3);
         }
         .net-balance h2 { font-size: 2.5rem; margin-top: 5px; font-weight: 700; }
-        
         .dashboard-cards { display: flex; gap: 15px; padding: 0 20px; }
         .card {
             flex: 1; padding: 25px 15px; border-radius: var(--border-radius);
@@ -83,74 +73,55 @@
         }
         .list-item-content { flex: 1; cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
         .list-item-content:active { opacity: 0.7; }
-        
         .name { font-weight: 600; font-size: 1.1rem; }
         .amount { font-weight: 700; font-size: 1.15rem; }
         .amount.lend { color: var(--lend-color); }
         .amount.borrow { color: var(--borrow-color); }
         .amount.return { color: var(--net-color); }
+        .empty-state { text-align: center; color: var(--text-muted); padding: 20px; font-style: italic; }
 
         /* --- Action Icons (Edit/Delete) --- */
         .item-actions { display: flex; gap: 10px; align-items: center; border-left: 1px solid #eee; padding-left: 10px; }
-        .icon-btn { 
-            background: none; border: none; font-size: 1.1rem; cursor: pointer; 
-            padding: 8px; border-radius: 8px; transition: background 0.2s;
-        }
+        .icon-btn { background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.2s; }
         .icon-btn.delete { color: var(--danger); }
         .icon-btn.edit { color: var(--edit); }
         .icon-btn:active { background: #f0f3f5; }
 
         /* --- Detail Page Specifics --- */
-        .person-summary {
-            background: var(--card-bg); padding: 20px; text-align: center;
-            border-bottom: 1px solid #eee; margin-bottom: 10px;
-        }
+        .person-summary { background: var(--card-bg); padding: 20px; text-align: center; border-bottom: 1px solid #eee; margin-bottom: 10px; }
         .transaction-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; display: flex; gap: 10px; }
         .badge { padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; background: #eee;}
-        
         .action-buttons { display: flex; gap: 10px; padding: 0 20px; margin-top: 10px; }
-        .btn-action {
-            flex: 1; padding: 12px; color: white; text-align: center; 
-            border-radius: 10px; font-weight: 600; border: none; cursor: pointer;
-        }
+        .btn-action { flex: 1; padding: 12px; color: white; text-align: center; border-radius: 10px; font-weight: 600; border: none; cursor: pointer; }
         .btn-return { background: var(--net-color); }
         .btn-new-entry { background: var(--text-main); }
 
         /* --- Floating Action Button (FAB) --- */
         .fab {
-            position: absolute; bottom: 25px; right: 25px;
-            width: 56px; height: 56px; border-radius: 50%;
-            background: var(--text-main); color: white;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            border: none; cursor: pointer; z-index: 20;
+            position: absolute; bottom: 25px; right: 25px; width: 56px; height: 56px; border-radius: 50%;
+            background: var(--text-main); color: white; display: flex; justify-content: center; align-items: center;
+            font-size: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: none; cursor: pointer; z-index: 20;
         }
 
-        /* --- Modals (Bottom Sheets) --- */
+        /* --- Modals --- */
         .modal-overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6); display: none;
-            justify-content: center; align-items: flex-end; z-index: 100;
-            opacity: 0; transition: opacity 0.3s;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none;
+            justify-content: center; align-items: flex-end; z-index: 100; opacity: 0; transition: opacity 0.3s;
         }
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-content {
-            background: var(--card-bg); width: 100%; border-radius: 24px 24px 0 0;
-            padding: 30px 20px; transform: translateY(100%);
-            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+            background: var(--card-bg); width: 100%; border-radius: 24px 24px 0 0; padding: 30px 20px;
+            transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
         }
         .modal-overlay.active .modal-content { transform: translateY(0); }
-        
         .form-group { margin-bottom: 18px; }
         .form-group label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 0.9rem; font-weight: 600;}
         .form-group input, .form-group select {
-            width: 100%; padding: 14px; border: 1px solid #dfe6e9; border-radius: 10px;
-            font-size: 1rem; background: #f8f9fa; outline: none;
+            width: 100%; padding: 14px; border: 1px solid #dfe6e9; border-radius: 10px; font-size: 1rem; background: #f8f9fa; outline: none;
         }
-        
         .btn-submit {
-            width: 100%; padding: 16px; background: var(--text-main); color: white;
-            border: none; border-radius: 10px; font-size: 1.1rem; font-weight: 600; margin-top: 10px; cursor: pointer;
+            width: 100%; padding: 16px; background: var(--text-main); color: white; border: none;
+            border-radius: 10px; font-size: 1.1rem; font-weight: 600; margin-top: 10px; cursor: pointer;
         }
         .btn-submit.return { background: var(--net-color); }
         .btn-submit.delete { background: var(--danger); }
@@ -168,109 +139,42 @@
         <div id="page-home" class="page active">
             <div class="net-balance">
                 <p>Net Balance</p>
-                <h2>₹ 3,500</h2>
+                <h2 id="total-net">₹ 0</h2>
             </div>
             <div class="dashboard-cards">
                 <div class="card lend" onclick="navigate('page-lend', 'Lent To')">
                     <p>Total Lent</p>
-                    <h3>₹ 5,000</h3>
+                    <h3 id="total-lend">₹ 0</h3>
                 </div>
                 <div class="card borrow" onclick="navigate('page-borrow', 'Borrowed From')">
                     <p>Total Borrowed</p>
-                    <h3>₹ 1,500</h3>
+                    <h3 id="total-borrow">₹ 0</h3>
                 </div>
             </div>
         </div>
 
         <div id="page-lend" class="page">
-            <div class="list-container">
-                <div class="list-item">
-                    <div class="list-item-content" onclick="navigate('page-details-lend', 'Rahul')">
-                        <span class="name">Rahul</span>
-                        <span class="amount lend">₹ 3,000</span>
-                    </div>
-                    <div class="item-actions">
-                        <button class="icon-btn delete" onclick="confirmDelete('Name: Rahul')">🗑️</button>
-                    </div>
-                </div>
-            </div>
+            <div class="list-container" id="lend-list"></div>
             <button class="fab" onclick="openModal('New Person')">+</button>
         </div>
 
         <div id="page-borrow" class="page">
-            <div class="list-container">
-                <div class="list-item">
-                    <div class="list-item-content" onclick="navigate('page-details-borrow', 'Amit')">
-                        <span class="name">Amit</span>
-                        <span class="amount borrow">₹ 1,500</span>
-                    </div>
-                    <div class="item-actions">
-                        <button class="icon-btn delete" onclick="confirmDelete('Name: Amit')">🗑️</button>
-                    </div>
-                </div>
-            </div>
+            <div class="list-container" id="borrow-list"></div>
             <button class="fab" onclick="openModal('New Person')">+</button>
         </div>
 
-        <div id="page-details-lend" class="page">
+        <div id="page-details" class="page">
             <div class="person-summary">
-                <h2 id="detail-name-lend">Rahul</h2>
-                <p>Pending: <strong class="amount lend">₹ 3,000</strong></p>
+                <h2 id="detail-name">Name</h2>
+                <p id="detail-status-text">Pending: <strong class="amount" id="detail-amount">₹ 0</strong></p>
             </div>
             <div class="action-buttons">
-                <button class="btn-action btn-return" onclick="openModal('Return Money')">Log Return</button>
+                <button class="btn-action btn-return" id="btn-return-action" onclick="openModal('Return Money')">Log Return</button>
                 <button class="btn-action btn-new-entry" onclick="openModal('New Entry')">Add Entry</button>
             </div>
             <div class="list-container">
                 <h4 style="margin-bottom: 10px; color: #636e72;">Transaction History</h4>
-                
-                <div class="list-item">
-                    <div class="list-item-content">
-                        <div>
-                            <span class="name">Lent Money</span>
-                            <div class="transaction-sub">
-                                <span>10 Oct 2023</span>
-                                <span class="badge">GPay</span>
-                            </div>
-                        </div>
-                        <span class="amount lend">₹ 4,000</span>
-                    </div>
-                    <div class="item-actions">
-                        <button class="icon-btn edit" onclick="openModal('Edit Entry')">✏️</button>
-                        <button class="icon-btn delete" onclick="confirmDelete('Entry: ₹4,000')">🗑️</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="page-details-borrow" class="page">
-            <div class="person-summary">
-                <h2 id="detail-name-borrow">Amit</h2>
-                <p>You Owe: <strong class="amount borrow">₹ 1,500</strong></p>
-            </div>
-            <div class="action-buttons">
-                <button class="btn-action btn-return" onclick="openModal('Return Money')">Log Repayment</button>
-                <button class="btn-action btn-new-entry" onclick="openModal('New Entry')">Add Entry</button>
-            </div>
-            <div class="list-container">
-                <h4 style="margin-bottom: 10px; color: #636e72;">Transaction History</h4>
-                
-                <div class="list-item">
-                    <div class="list-item-content">
-                        <div>
-                            <span class="name">Borrowed Money</span>
-                            <div class="transaction-sub">
-                                <span>01 Nov 2023</span>
-                                <span class="badge">UPI</span>
-                            </div>
-                        </div>
-                        <span class="amount borrow">₹ 1,500</span>
-                    </div>
-                    <div class="item-actions">
-                        <button class="icon-btn edit" onclick="openModal('Edit Entry')">✏️</button>
-                        <button class="icon-btn delete" onclick="confirmDelete('Entry: ₹1,500')">🗑️</button>
-                    </div>
-                </div>
+                <div id="details-history-list"></div>
             </div>
         </div>
     </div>
@@ -281,77 +185,262 @@
             
             <div class="form-group" id="name-group">
                 <label>Person's Name</label>
-                <input type="text" placeholder="e.g. Rohan">
+                <input type="text" id="input-name" placeholder="e.g. Rohan">
             </div>
-            
             <div class="form-group">
                 <label>Amount (₹)</label>
-                <input type="number" placeholder="0.00">
+                <input type="number" id="input-amount" placeholder="0.00">
             </div>
-
             <div class="form-group" id="method-group">
                 <label>Payment Method</label>
-                <select id="payment-method">
-                    <option>Cash</option>
-                    <option>GPay</option>
-                    <option>Paytm</option>
-                    <option>PhonePe</option>
-                    <option>UPI</option>
+                <select id="input-method">
+                    <option>Cash</option><option>GPay</option><option>Paytm</option><option>PhonePe</option><option>UPI</option>
                 </select>
             </div>
-
             <div class="form-group" id="date-group">
                 <label>Date</label>
-                <input type="date" id="date-picker">
+                <input type="date" id="input-date">
             </div>
-
-            <button class="btn-submit" id="submit-btn" onclick="closeModalDirect('action-modal')">Save Details</button>
+            <button class="btn-submit" id="submit-btn" onclick="saveData()">Save Details</button>
         </div>
     </div>
 
     <div id="delete-modal" class="modal-overlay" onclick="closeModal(event, 'delete-modal')">
         <div class="modal-content" onclick="event.stopPropagation()" style="text-align: center;">
             <h3 style="margin-bottom: 15px; color: var(--danger);">Confirm Delete</h3>
-            <p id="delete-text" style="margin-bottom: 25px; color: var(--text-muted);">Are you sure you want to delete this?</p>
-            <button class="btn-submit delete" onclick="closeModalDirect('delete-modal')">Yes, Delete</button>
+            <p id="delete-text" style="margin-bottom: 25px; color: var(--text-muted);">Are you sure?</p>
+            <button class="btn-submit delete" onclick="executeDelete()">Yes, Delete</button>
             <button class="btn-submit" style="background: #dfe6e9; color: var(--text-main);" onclick="closeModalDirect('delete-modal')">Cancel</button>
         </div>
     </div>
-
 </div>
 
 <script>
-    document.getElementById('date-picker').valueAsDate = new Date();
+    // --- Application State ---
+    let appData = JSON.parse(localStorage.getItem('financeTrackerData')) || { lend: [], borrow: [] };
     let historyStack = ['page-home'];
+    
+    // Tracking current context
+    let currentCategory = '';     // 'lend' or 'borrow'
+    let currentPersonId = null; 
+    let currentAction = '';       // 'New Person', 'New Entry', 'Return Money', 'Edit Entry'
+    let editingTransactionId = null;
+    let deletingItem = { type: '', personId: null, transId: null };
 
+    // --- Core Logic & Rendering ---
+    function init() {
+        document.getElementById('input-date').valueAsDate = new Date();
+        renderDashboard();
+    }
+
+    function saveToStorage() {
+        localStorage.setItem('financeTrackerData', JSON.stringify(appData));
+        renderDashboard();
+        if (historyStack[historyStack.length - 1] === 'page-lend' || historyStack[historyStack.length - 1] === 'page-borrow') {
+            renderList(historyStack[historyStack.length - 1] === 'page-lend' ? 'lend' : 'borrow');
+        }
+        if (historyStack[historyStack.length - 1] === 'page-details') {
+            renderDetails();
+        }
+    }
+
+    function generateId() {
+        return Math.random().toString(36).substr(2, 9);
+    }
+
+    // --- Rendering Functions ---
+    function renderDashboard() {
+        let totalLend = 0, totalBorrow = 0;
+
+        appData.lend.forEach(person => {
+            person.transactions.forEach(t => {
+                if(t.type === 'primary') totalLend += t.amount;
+                if(t.type === 'return') totalLend -= t.amount;
+            });
+        });
+
+        appData.borrow.forEach(person => {
+            person.transactions.forEach(t => {
+                if(t.type === 'primary') totalBorrow += t.amount;
+                if(t.type === 'return') totalBorrow -= t.amount;
+            });
+        });
+
+        const net = totalLend - totalBorrow;
+        
+        document.getElementById('total-lend').innerText = `₹ ${totalLend}`;
+        document.getElementById('total-borrow').innerText = `₹ ${totalBorrow}`;
+        
+        const netEl = document.getElementById('total-net');
+        netEl.innerText = `₹ ${Math.abs(net)}`;
+        document.querySelector('.net-balance').style.background = net >= 0 ? 'var(--net-color)' : 'var(--danger)';
+    }
+
+    function calculatePersonBalance(person) {
+        return person.transactions.reduce((total, t) => {
+            return t.type === 'primary' ? total + t.amount : total - t.amount;
+        }, 0);
+    }
+
+    function renderList(category) {
+        currentCategory = category;
+        const listEl = document.getElementById(`${category}-list`);
+        listEl.innerHTML = '';
+
+        if (appData[category].length === 0) {
+            listEl.innerHTML = '<div class="empty-state">No entries yet. Tap + to add.</div>';
+            return;
+        }
+
+        appData[category].forEach(person => {
+            const balance = calculatePersonBalance(person);
+            const colorClass = category === 'lend' ? 'lend' : 'borrow';
+            
+            listEl.innerHTML += `
+                <div class="list-item">
+                    <div class="list-item-content" onclick="openDetails('${person.id}')">
+                        <span class="name">${person.name}</span>
+                        <span class="amount ${colorClass}">₹ ${balance}</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="icon-btn delete" onclick="confirmDelete('person', '${person.id}', null, '${person.name}')">🗑️</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function openDetails(personId) {
+        currentPersonId = personId;
+        renderDetails();
+        navigate('page-details', 'Details');
+    }
+
+    function renderDetails() {
+        const person = appData[currentCategory].find(p => p.id === currentPersonId);
+        if (!person) return goBack();
+
+        const balance = calculatePersonBalance(person);
+        const colorClass = currentCategory === 'lend' ? 'lend' : 'borrow';
+
+        document.getElementById('detail-name').innerText = person.name;
+        document.getElementById('detail-amount').innerText = `₹ ${balance}`;
+        document.getElementById('detail-amount').className = `amount ${colorClass}`;
+        
+        document.getElementById('detail-status-text').innerHTML = currentCategory === 'lend' 
+            ? `Pending: <strong class="amount lend" id="detail-amount">₹ ${balance}</strong>`
+            : `You Owe: <strong class="amount borrow" id="detail-amount">₹ ${balance}</strong>`;
+
+        document.getElementById('btn-return-action').innerText = currentCategory === 'lend' ? 'Log Return' : 'Log Repayment';
+
+        const historyList = document.getElementById('details-history-list');
+        historyList.innerHTML = '';
+
+        person.transactions.forEach(t => {
+            const isReturn = t.type === 'return';
+            const tColor = isReturn ? 'return' : colorClass;
+            const prefix = isReturn ? '- ' : '';
+            const typeText = isReturn ? (currentCategory === 'lend' ? 'Money Returned' : 'Repaid') : (currentCategory === 'lend' ? 'Lent Money' : 'Borrowed Money');
+
+            historyList.innerHTML += `
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div>
+                            <span class="name">${typeText}</span>
+                            <div class="transaction-sub">
+                                <span>${t.date}</span>
+                                <span class="badge">${t.method}</span>
+                            </div>
+                        </div>
+                        <span class="amount ${tColor}">${prefix}₹ ${t.amount}</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="icon-btn edit" onclick="openEditEntry('${t.id}')">✏️</button>
+                        <button class="icon-btn delete" onclick="confirmDelete('transaction', '${person.id}', '${t.id}', 'this entry')">🗑️</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // --- Data Saving logic ---
+    function saveData() {
+        const nameInput = document.getElementById('input-name').value.trim();
+        const amountInput = parseFloat(document.getElementById('input-amount').value);
+        const methodInput = document.getElementById('input-method').value;
+        const dateInput = document.getElementById('input-date').value;
+
+        if (isNaN(amountInput) || amountInput <= 0) return alert("Enter a valid amount");
+
+        if (currentAction === 'New Person') {
+            if (!nameInput) return alert("Enter a name");
+            appData[currentCategory].push({
+                id: generateId(),
+                name: nameInput,
+                transactions: [{ id: generateId(), type: 'primary', amount: amountInput, date: dateInput, method: methodInput }]
+            });
+        } 
+        else if (currentAction === 'New Entry' || currentAction === 'Return Money') {
+            const person = appData[currentCategory].find(p => p.id === currentPersonId);
+            person.transactions.push({
+                id: generateId(),
+                type: currentAction === 'New Entry' ? 'primary' : 'return',
+                amount: amountInput,
+                date: dateInput,
+                method: methodInput
+            });
+        }
+        else if (currentAction === 'Edit Entry') {
+            const person = appData[currentCategory].find(p => p.id === currentPersonId);
+            const transaction = person.transactions.find(t => t.id === editingTransactionId);
+            transaction.amount = amountInput;
+            transaction.date = dateInput;
+            transaction.method = methodInput;
+        }
+
+        saveToStorage();
+        closeModalDirect('action-modal');
+    }
+
+    // --- Deletion Logic ---
+    function confirmDelete(type, personId, transId, name) {
+        deletingItem = { type, personId, transId };
+        document.getElementById('delete-text').innerText = `Are you sure you want to delete ${name}?`;
+        document.getElementById('delete-modal').classList.add('active');
+    }
+
+    function executeDelete() {
+        if (deletingItem.type === 'person') {
+            appData[currentCategory] = appData[currentCategory].filter(p => p.id !== deletingItem.personId);
+        } else if (deletingItem.type === 'transaction') {
+            const person = appData[currentCategory].find(p => p.id === deletingItem.personId);
+            person.transactions = person.transactions.filter(t => t.id !== deletingItem.transId);
+        }
+        saveToStorage();
+ closeModalDirect('delete-modal');
+    }
+
+    // --- UI/Navigation ---
     function navigate(targetId, title) {
         const currentId = historyStack[historyStack.length - 1];
         if(currentId === targetId) return;
 
+        if(targetId === 'page-lend') renderList('lend');
+        if(targetId === 'page-borrow') renderList('borrow');
+
         document.getElementById(currentId).classList.remove('active');
         document.getElementById(currentId).classList.add('prev');
-        
-        if(targetId === 'page-details-lend') {
-            document.getElementById('detail-name-lend').innerText = title;
-            title = "Details"; 
-        } else if (targetId === 'page-details-borrow') {
-            document.getElementById('detail-name-borrow').innerText = title;
-            title = "Details";
-        }
-
         const targetPage = document.getElementById(targetId);
         targetPage.classList.remove('prev');
         targetPage.classList.add('active');
 
         document.getElementById('header-title').innerText = title;
         document.getElementById('backBtn').style.display = 'block';
-
         historyStack.push(targetId);
     }
 
     function goBack() {
         if (historyStack.length <= 1) return;
-
         const currentId = historyStack.pop();
         const prevId = historyStack[historyStack.length - 1];
 
@@ -361,53 +450,65 @@
         prevPage.classList.add('active');
 
         let title = 'Dashboard';
-        if (prevId === 'page-lend') title = 'Lent To';
-        if (prevId === 'page-borrow') title = 'Borrowed From';
+        if (prevId === 'page-lend') { title = 'Lent To'; renderList('lend'); }
+        if (prevId === 'page-borrow') { title = 'Borrowed From'; renderList('borrow'); }
         
         document.getElementById('header-title').innerText = title;
         document.getElementById('backBtn').style.display = prevId === 'page-home' ? 'none' : 'block';
     }
 
     function openModal(actionType) {
+        currentAction = actionType;
         const modal = document.getElementById('action-modal');
-        const titleEl = document.getElementById('modal-title');
+        document.getElementById('modal-title').innerText = actionType;
+        
+        // Reset fields
+        document.getElementById('input-name').value = '';
+        document.getElementById('input-amount').value = '';
+        document.getElementById('input-date').valueAsDate = new Date();
+        document.getElementById('input-method').selectedIndex = 0;
+
         const nameGroup = document.getElementById('name-group');
         const submitBtn = document.getElementById('submit-btn');
-        
-        titleEl.innerText = actionType;
         submitBtn.className = 'btn-submit';
         submitBtn.innerText = 'Save Details';
 
         if(actionType === 'New Person') {
             nameGroup.style.display = 'block';
-        } else if (actionType === 'New Entry' || actionType === 'Edit Entry') {
+        } else {
             nameGroup.style.display = 'none';
-            if(actionType === 'Edit Entry') submitBtn.innerText = 'Update Entry';
-        } else if (actionType === 'Return Money') {
-            nameGroup.style.display = 'none';
-            submitBtn.className = 'btn-submit return';
-            submitBtn.innerText = 'Confirm Return';
+            if(actionType === 'Return Money') {
+                submitBtn.className = 'btn-submit return';
+                submitBtn.innerText = 'Confirm Return';
+            }
         }
-        
         modal.classList.add('active');
     }
 
-    function confirmDelete(itemName) {
-        document.getElementById('delete-text').innerText = `Are you sure you want to delete ${itemName}? This cannot be undone.`;
-        document.getElementById('delete-modal').classList.add('active');
+    function openEditEntry(transId) {
+        editingTransactionId = transId;
+        const person = appData[currentCategory].find(p => p.id === currentPersonId);
+        const t = person.transactions.find(t => t.id === transId);
+        
+        document.getElementById('input-amount').value = t.amount;
+        document.getElementById('input-method').value = t.method;
+        document.getElementById('input-date').value = t.date;
+        
+        openModal('Edit Entry');
+        document.getElementById('submit-btn').innerText = 'Update Entry';
     }
 
     function closeModal(event, modalId) {
-        if (event.target === document.getElementById(modalId)) {
-            closeModalDirect(modalId);
-        }
+        if (event.target === document.getElementById(modalId)) closeModalDirect(modalId);
     }
 
     function closeModalDirect(modalId) {
         document.getElementById(modalId).classList.remove('active');
     }
+
+    // Run on startup
+    init();
 </script>
 
 </body>
 </html>
-
