@@ -128,6 +128,7 @@
     </style>
 </head>
 <body>
+
 <div id="app-container">
     <header>
         <button class="back-btn" id="backBtn" onclick="goBack()">&#8592;</button>
@@ -154,12 +155,12 @@
 
         <div id="page-lend" class="page">
             <div class="list-container" id="lend-list"></div>
-            <button class="fab" onclick="openModal('Add Entry')">+</button>
+            <button class="fab" onclick="openModal('New Person')">+</button>
         </div>
 
         <div id="page-borrow" class="page">
             <div class="list-container" id="borrow-list"></div>
-            <button class="fab" onclick="openModal('Add Entry')">+</button>
+            <button class="fab" onclick="openModal('New Person')">+</button>
         </div>
 
         <div id="page-details" class="page">
@@ -169,7 +170,7 @@
             </div>
             <div class="action-buttons">
                 <button class="btn-action btn-return" id="btn-return-action" onclick="openModal('Return Money')">Log Return</button>
-                <button class="btn-action btn-new-entry" onclick="openModal('Add Entry')">Add Entry</button>
+                <button class="btn-action btn-new-entry" onclick="openModal('New Entry')">Add Entry</button>
             </div>
             <div class="list-container">
                 <h4 style="margin-bottom: 10px; color: #636e72;">Transaction History</h4>
@@ -213,7 +214,6 @@
         </div>
     </div>
 </div>
-
 <script>
     // --- Application State ---
     let appData = JSON.parse(localStorage.getItem('financeTrackerData')) || { lend: [], borrow: [] };
@@ -293,7 +293,8 @@
         appData[category].forEach(person => {
             const balance = calculatePersonBalance(person);
             const colorClass = category === 'lend' ? 'lend' : 'borrow';
-listEl.innerHTML += `
+            
+            listEl.innerHTML += `
                 <div class="list-item">
                     <div class="list-item-content" onclick="openDetails('${person.id}')">
                         <span class="name">${person.name}</span>
@@ -360,7 +361,7 @@ listEl.innerHTML += `
         });
     }
 
-    // --- Smart Data Saving Logic ---
+    // --- Strict Data Saving Logic ---
     function saveData() {
         const amountInput = parseFloat(document.getElementById('input-amount').value);
         const methodInput = document.getElementById('input-method').value;
@@ -368,31 +369,29 @@ listEl.innerHTML += `
 
         if (isNaN(amountInput) || amountInput <= 0) return alert("Enter a valid amount");
 
-        const isDetailsPage = historyStack[historyStack.length - 1] === 'page-details';
-
-        if (currentAction === 'Add Entry') {
-            let targetPerson;
+        if (currentAction === 'New Person') {
+            const nameInput = document.getElementById('input-name').value.trim();
+            if (!nameInput) return alert("Enter a name");
             
-            if (isDetailsPage) {
-                // If on detail page, add directly to the viewed person
-                targetPerson = appData[currentCategory].find(p => p.id === currentPersonId);
-            } else {
-                // If on list page, check the name input
-                const nameInput = document.getElementById('input-name').value.trim();
-                if (!nameInput) return alert("Enter a name");
-                
-                // Smart Search: Check if person already exists (case-insensitive)
-                targetPerson = appData[currentCategory].find(p => p.name.toLowerCase() === nameInput.toLowerCase());
-                
-                // If they don't exist, create them
-                if (!targetPerson) {
-                    targetPerson = { id: generateId(), name: nameInput, transactions: [] };
-                    appData[currentCategory].push(targetPerson);
-                }
+            // Check if name already exists to prevent duplicate profiles
+            let targetPerson = appData[currentCategory].find(p => p.name.toLowerCase() === nameInput.toLowerCase());
+            
+            if (!targetPerson) {
+                targetPerson = { id: generateId(), name: nameInput, transactions: [] };
+                appData[currentCategory].push(targetPerson);
             }
-
-            // Push the transaction to the person
+            
             targetPerson.transactions.push({
+                id: generateId(),
+                type: 'primary',
+                amount: amountInput,
+                date: dateInput,
+                method: methodInput
+            });
+        }
+        else if (currentAction === 'New Entry') {
+            const person = appData[currentCategory].find(p => p.id === currentPersonId);
+            person.transactions.push({
                 id: generateId(),
                 type: 'primary',
                 amount: amountInput,
@@ -490,13 +489,11 @@ listEl.innerHTML += `
         submitBtn.className = 'btn-submit';
         submitBtn.innerText = 'Save Details';
 
-        const isDetailsPage = historyStack[historyStack.length - 1] === 'page-details';
-
-        if (actionType === 'Add Entry') {
-            nameGroup.style.display = isDetailsPage ? 'none' : 'block';
-        } else if (actionType === 'Edit Entry') {
+        if (actionType === 'New Person') {
+            nameGroup.style.display = 'block';
+        } else if (actionType === 'New Entry' || actionType === 'Edit Entry') {
             nameGroup.style.display = 'none';
-            submitBtn.innerText = 'Update Entry';
+            if(actionType === 'Edit Entry') submitBtn.innerText = 'Update Entry';
         } else if (actionType === 'Return Money') {
             nameGroup.style.display = 'none';
             submitBtn.className = 'btn-submit return';
