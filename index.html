@@ -48,7 +48,7 @@
             transition: background-color 0.4s ease, color 0.4s ease;
         }
 
-        #app-container, header, .page, .card, .list-item, .modal-content, .person-summary, input, select {
+        #app-container, header, .page, .card, .list-item, .modal-content, .person-summary, .category-summary, input, select {
             transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
         }
 
@@ -115,6 +115,14 @@
         .card h3 { font-size: 1.4rem; margin-top: 8px; }
         .card.lend h3 { color: var(--lend-color); }
         .card.borrow h3 { color: var(--borrow-color); }
+
+        /* --- Category Summaries (Inside Tabs) --- */
+        .category-summary {
+            background: var(--card-bg); padding: 25px 20px; text-align: center;
+            border-bottom: 1px solid var(--border-line); margin-bottom: 10px;
+        }
+        .category-summary p { color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px; }
+        .category-summary h2 { font-size: 2.2rem; }
 
         /* --- Lists & Items --- */
         .list-container { padding: 20px; }
@@ -192,11 +200,11 @@
                 <h2 id="total-net">₹ 0</h2>
             </div>
             <div class="dashboard-cards">
-                <div class="card lend" onclick="navigate('page-lend', 'Lent To')">
-                    <p>Total Lent</p>
+                <div class="card lend" onclick="navigate('page-lend', 'Lend')">
+                    <p>Total Lend</p>
                     <h3 id="total-lend">₹ 0</h3>
                 </div>
-                <div class="card borrow" onclick="navigate('page-borrow', 'Borrowed From')">
+                <div class="card borrow" onclick="navigate('page-borrow', 'Borrow')">
                     <p>Total Borrowed</p>
                     <h3 id="total-borrow">₹ 0</h3>
                 </div>
@@ -204,10 +212,18 @@
         </div>
 
         <div id="page-lend" class="page">
+            <div class="category-summary">
+                <p>Total Lend</p>
+                <h2 id="tab-total-lend" class="amount lend">₹ 0</h2>
+            </div>
             <div class="list-container" id="lend-list"></div>
         </div>
 
         <div id="page-borrow" class="page">
+            <div class="category-summary">
+                <p>Total Borrowed</p>
+                <h2 id="tab-total-borrow" class="amount borrow">₹ 0</h2>
+            </div>
             <div class="list-container" id="borrow-list"></div>
         </div>
 
@@ -333,8 +349,17 @@
         });
 
         const net = totalLend - totalBorrow;
+        
+        // Update Dashboard Cards
         document.getElementById('total-lend').innerText = `₹ ${totalLend}`;
         document.getElementById('total-borrow').innerText = `₹ ${totalBorrow}`;
+        
+        // Update Category Tab Headers
+        const tabTotalLendEl = document.getElementById('tab-total-lend');
+        if (tabTotalLendEl) tabTotalLendEl.innerText = `₹ ${totalLend}`;
+        
+        const tabTotalBorrowEl = document.getElementById('tab-total-borrow');
+        if (tabTotalBorrowEl) tabTotalBorrowEl.innerText = `₹ ${totalBorrow}`;
         
         const netEl = document.getElementById('total-net');
         netEl.innerText = `₹ ${Math.abs(net)}`;
@@ -405,9 +430,8 @@
             const isReturn = t.type === 'return';
             const tColor = isReturn ? 'return' : colorClass;
             const prefix = isReturn ? '- ' : '';
-            const typeText = isReturn ? (currentCategory === 'lend' ? 'Money Returned' : 'Repaid') : (currentCategory === 'lend' ? 'Lent Money' : 'Borrowed Money');
+            const typeText = isReturn ? (currentCategory === 'lend' ? 'Money Returned' : 'Repaid') : (currentCategory === 'lend' ? 'Lend Money' : 'Borrowed Money');
             
-            // Generate HTML for remarks if they exist
             const remarksHtml = t.remarks ? `<div class="transaction-remarks">Note: ${t.remarks}</div>` : '';
 
             historyList.innerHTML += `
@@ -531,8 +555,8 @@
         prevPage.classList.add('active');
 
         let title = 'Dashboard';
-        if (prevId === 'page-lend') { title = 'Lent To'; renderList('lend'); }
-        if (prevId === 'page-borrow') { title = 'Borrowed From'; renderList('borrow'); }
+        if (prevId === 'page-lend') { title = 'Lend'; renderList('lend'); }
+        if (prevId === 'page-borrow') { title = 'Borrow'; renderList('borrow'); }
         
         document.getElementById('header-title').innerText = title;
         updateHeaderButtons(prevId);
@@ -579,7 +603,7 @@
         document.getElementById('input-amount').value = t.amount;
         document.getElementById('input-method').value = t.method;
         document.getElementById('input-date').value = t.date;
-        document.getElementById('input-remarks').value = t.remarks || ''; // Load existing remarks
+        document.getElementById('input-remarks').value = t.remarks || '';
         
         openModal('Edit Entry');
     }
