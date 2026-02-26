@@ -1,614 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lend & Borrow Tracker</title>
-    <style>
-        /* --- Base Variables & Light Theme Setup --- */
-        :root {
-            --body-bg: #dfe6e9; --bg-color: #f8f9fa; --text-main: #2d3436; --text-muted: #636e72;
-            --lend-color: #0984e3; --borrow-color: #d63031; --net-color: #00b894;
-            --card-bg: #ffffff; --border-radius: 16px; --danger: #ff7675; --edit: #74b9ff;
-            --input-bg: #f8f9fa; --input-border: #dfe6e9; --add-btn-bg: #f0f3f5;
-            --add-btn-active: #dfe6e9; --border-line: #eee;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Lend & Borrow Tracker</title>
 
-        /* --- Dark Theme Variables --- */
-        body.dark-theme {
-            --body-bg: #000000; --bg-color: #121212; --text-main: #f5f6fa; --text-muted: #a4b0be;
-            --card-bg: #1e1e1e; --input-bg: #2d2d2d; --input-border: #444; --add-btn-bg: #2d2d2d;
-            --add-btn-active: #444; --border-line: #333; --lend-color: #74b9ff; --borrow-color: #ff7675;
-        }
+<style>
+:root{
+--body-bg:#dfe6e9;--bg-color:#f8f9fa;--text-main:#2d3436;--text-muted:#636e72;
+--lend-color:#0984e3;--borrow-color:#d63031;--net-color:#00b894;
+--card-bg:#ffffff;--danger:#ff7675;--input-bg:#f8f9fa;--input-border:#dfe6e9;
+--add-btn-bg:#f0f3f5;--border-line:#eee;
+}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        
-        body { 
-            background-color: var(--body-bg); display: flex; justify-content: center; height: 100vh; overflow: hidden; color: var(--text-main); 
-            transition: background-color 0.4s ease, color 0.4s ease;
-        }
+body.dark-theme{
+--body-bg:#000;--bg-color:#121212;--text-main:#f5f6fa;--text-muted:#a4b0be;
+--card-bg:#1e1e1e;--input-bg:#2d2d2d;--input-border:#444;
+--add-btn-bg:#2d2d2d;--border-line:#333;
+--lend-color:#74b9ff;--borrow-color:#ff7675;
+}
 
-        #app-container, header, .page, .card, .list-item, .modal-content, .person-summary, .category-summary, input, select {
-            transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-        }
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
 
-        /* --- Mobile App Container --- */
-        #app-container {
-            width: 100%; max-width: 480px; height: 100%;
-            background-color: var(--bg-color); position: relative;
-            overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.3);
-            display: flex; flex-direction: column;
-        }
+body{
+background:var(--body-bg);
+display:flex;justify-content:center;height:100vh;overflow:hidden;
+color:var(--text-main);transition:.4s;
+}
 
-        /* --- Header --- */
-        header {
-            background: var(--card-bg); padding: 20px; text-align: center;
-            font-size: 1.25rem; font-weight: 600; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: flex; align-items: center; justify-content: center;
-            position: relative; z-index: 10; height: 70px; flex-shrink: 0;
-        }
-        
-        .header-left-btn {
-            position: absolute; left: 15px; background: none; border: none; font-size: 1.5rem; color: var(--text-main); 
-            cursor: pointer; padding: 10px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;
-        }
-        .header-left-btn:active { transform: scale(0.9); }
-        #backBtn { display: none; }
+#app-container{
+width:100%;max-width:480px;height:100%;
+background:var(--bg-color);
+display:flex;flex-direction:column;overflow:hidden;
+animation:appFade .5s ease;
+}
 
-        .header-add-btn {
-            position: absolute; right: 15px; background: var(--add-btn-bg); border: none; font-size: 1.8rem; color: var(--text-main); 
-            cursor: pointer; display: none; width: 40px; height: 40px; border-radius: 12px; line-height: 38px; text-align: center; padding: 0;
-            transition: background-color 0.4s ease, transform 0.1s, color 0.4s ease;
-        }
-        .header-add-btn:active { background: var(--add-btn-active); transform: scale(0.95); }
+@keyframes appFade{
+from{opacity:0;transform:scale(.98);}
+to{opacity:1;transform:scale(1);}
+}
 
-        /* --- Page Animations --- */
-        .page-wrapper { position: relative; flex: 1; overflow: hidden; }
-        .page {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-color); transform: translateX(100%);
-            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.4s ease;
-            overflow-y: auto; padding-bottom: 30px; display: none; flex-direction: column;
-        }
-        .page.active { transform: translateX(0); display: flex; z-index: 5; }
-        .page.prev { transform: translateX(-30%); display: flex; z-index: 4; opacity: 0.8; }
+header{
+height:70px;display:flex;align-items:center;justify-content:center;
+position:relative;font-weight:600;font-size:1.2rem;
+background:var(--card-bg);
+}
 
-        /* --- Homepage Dashboard --- */
-        .net-balance {
-            margin: 20px; padding: 30px 20px; background: var(--net-color); color: white; border-radius: var(--border-radius); 
-            text-align: center; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-        }
-        .net-balance h2 { font-size: 2.5rem; margin-top: 5px; font-weight: 700; }
-        .dashboard-cards { display: flex; gap: 15px; padding: 0 20px; }
-        .card {
-            flex: 1; padding: 25px 15px; border-radius: var(--border-radius); background: var(--card-bg); text-align: center; 
-            cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.1s, background-color 0.4s ease;
-        }
-        .card:active { transform: scale(0.96); }
-        .card h3 { font-size: 1.4rem; margin-top: 8px; }
-        .card.lend h3 { color: var(--lend-color); }
-        .card.borrow h3 { color: var(--borrow-color); }
+.header-left-btn,.header-add-btn{
+position:absolute;border:none;background:none;cursor:pointer;
+font-size:1.5rem;color:var(--text-main);
+}
 
-        /* --- Category Summaries --- */
-        .category-summary { background: var(--card-bg); padding: 25px 20px; text-align: center; border-bottom: 1px solid var(--border-line); margin-bottom: 10px; }
-        .category-summary p { color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px; }
-        .category-summary h2 { font-size: 2.2rem; }
+.header-left-btn{left:15px;}
+.header-add-btn{
+right:15px;font-size:1.8rem;display:none;
+transition:transform .2s ease;
+}
 
-        /* --- Lists & Items --- */
-        .list-container { padding: 20px; }
-        .list-item {
-            background: var(--card-bg); padding: 16px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between;
-            align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); 
-        }
-        .list-item-content { flex: 1; cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
-        .list-item-content:active { opacity: 0.7; }
-        .name { font-weight: 600; font-size: 1.1rem; }
-        .amount { font-weight: 700; font-size: 1.15rem; transition: color 0.4s ease; }
-        .amount.lend { color: var(--lend-color); }
-        .amount.borrow { color: var(--borrow-color); }
-        .amount.return { color: var(--net-color); }
-        .empty-state { text-align: center; color: var(--text-muted); padding: 20px; font-style: italic; }
+.header-add-btn:hover{transform:rotate(90deg) scale(1.05);}
+.header-add-btn:active{transform:scale(.9);}
 
-        /* --- Action Icons --- */
-        .item-actions { display: flex; gap: 10px; align-items: center; border-left: 1px solid var(--border-line); padding-left: 10px; transition: border-color 0.4s ease; }
-        .icon-btn { background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.2s; }
-        .icon-btn.delete { color: var(--danger); }
-        .icon-btn.edit { color: var(--edit); }
-        .icon-btn:active { background: var(--add-btn-bg); }
+.page-wrapper{flex:1;position:relative;overflow:hidden;}
 
-        /* --- Detail Page Specifics --- */
-        .person-summary { background: var(--card-bg); padding: 20px; text-align: center; border-bottom: 1px solid var(--border-line); margin-bottom: 10px; }
-        .transaction-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; display: flex; gap: 10px; align-items: center; }
-        .transaction-remarks { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; font-style: italic; line-height: 1.3; }
-        .badge { padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; background: var(--add-btn-bg); color: var(--text-main); transition: background-color 0.4s ease, color 0.4s ease;}
-        .action-buttons { display: flex; gap: 10px; padding: 0 20px; margin-top: 10px; }
-        .btn-action { flex: 1; padding: 12px; color: white; text-align: center; border-radius: 10px; font-weight: 600; border: none; cursor: pointer; }
-        .btn-return { background: var(--net-color); }
-        .btn-new-entry { background: #555; } 
+.page{
+position:absolute;inset:0;
+background:var(--bg-color);
+transform:translateX(100%) scale(.98);
+opacity:0;
+transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .3s ease;
+overflow-y:auto;
+display:none;
+}
 
-        /* --- Modals --- */
-        .modal-overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none;
-            justify-content: center; align-items: flex-end; z-index: 100; opacity: 0; transition: opacity 0.3s;
-        }
-        .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content {
-            background: var(--card-bg); width: 100%; border-radius: 24px 24px 0 0; padding: 30px 20px;
-            transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.4s ease;
-        }
-        .modal-overlay.active .modal-content { transform: translateY(0); }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 0.9rem; font-weight: 600;}
-        .form-group input, .form-group select {
-            width: 100%; padding: 12px 14px; border: 1px solid var(--input-border); border-radius: 10px; 
-            font-size: 1rem; background: var(--input-bg); color: var(--text-main); outline: none;
-        }
-        .btn-submit {
-            width: 100%; padding: 16px; background: #555; color: white; border: none;
-            border-radius: 10px; font-size: 1.1rem; font-weight: 600; margin-top: 15px; cursor: pointer;
-        }
-        .btn-submit.return { background: var(--net-color); }
-        .btn-submit.delete { background: var(--danger); }
-    </style>
+.page.active{
+display:flex;flex-direction:column;
+transform:translateX(0) scale(1);
+opacity:1;
+}
+
+.page.prev{
+display:flex;
+transform:translateX(-20%) scale(.96);
+opacity:.6;
+}
+
+.net-balance{
+margin:20px;padding:25px;text-align:center;
+background:var(--net-color);color:white;border-radius:16px;
+}
+
+.net-balance h2{font-size:2.2rem;margin-top:5px;}
+
+.dashboard-cards{display:flex;gap:15px;padding:0 20px;}
+
+.card{
+flex:1;background:var(--card-bg);padding:20px;border-radius:16px;
+text-align:center;cursor:pointer;
+transition:transform .2s ease,box-shadow .2s ease;
+box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+
+.card:hover{
+transform:translateY(-3px);
+box-shadow:0 8px 20px rgba(0,0,0,.12);
+}
+
+.card:active{transform:scale(.97);}
+
+.card.lend h3{color:var(--lend-color);}
+.card.borrow h3{color:var(--borrow-color);}
+
+.category-summary,.person-summary{
+background:var(--card-bg);padding:20px;text-align:center;
+border-bottom:1px solid var(--border-line);
+}
+
+.list-container{padding:20px;}
+
+.list-item{
+background:var(--card-bg);padding:15px;margin-bottom:10px;
+border-radius:12px;display:flex;justify-content:space-between;align-items:center;
+opacity:0;transform:translateY(10px);
+animation:fadeSlideUp .4s ease forwards;
+}
+
+@keyframes fadeSlideUp{
+to{opacity:1;transform:translateY(0);}
+}
+
+.amount{font-weight:700;}
+.amount.lend{color:var(--lend-color);}
+.amount.borrow{color:var(--borrow-color);}
+.amount.return{color:var(--net-color);}
+
+.modal-overlay{
+position:absolute;inset:0;background:rgba(0,0,0,.6);
+display:none;justify-content:center;align-items:flex-end;
+}
+
+.modal-overlay.active{display:flex;}
+
+.modal-content{
+width:100%;background:var(--card-bg);
+border-radius:24px 24px 0 0;padding:25px;
+transform:translateY(100%);
+transition:transform .45s cubic-bezier(.34,1.56,.64,1);
+}
+
+.modal-overlay.active .modal-content{transform:translateY(0);}
+
+.form-group{margin-bottom:12px;}
+.form-group input{
+width:100%;padding:10px;border:1px solid var(--input-border);
+border-radius:10px;background:var(--input-bg);color:var(--text-main);
+}
+
+.btn-submit{
+width:100%;padding:14px;margin-top:10px;
+border:none;border-radius:10px;font-weight:600;cursor:pointer;
+background:#555;color:white;
+}
+
+.empty-state{text-align:center;color:var(--text-muted);}
+</style>
 </head>
+
 <body>
 
 <div id="app-container">
-    <header>
-        <button class="header-left-btn" id="backBtn" onclick="goBack()">&#8592;</button>
-        <button class="header-left-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙</button>
-        <span id="header-title">Dashboard</span>
-        <button class="header-add-btn" id="headerAddBtn" onclick="openModal('Add Entry')">+</button>
-    </header>
 
-    <div class="page-wrapper">
-        <div id="page-home" class="page active">
-            <div class="net-balance">
-                <p>Net Balance</p>
-                <h2 id="total-net">₹ 0</h2>
-            </div>
-            <div class="dashboard-cards">
-                <div class="card lend" onclick="navigate('page-lend', 'Lend')">
-                    <p>Total Lend</p>
-                    <h3 id="total-lend">₹ 0</h3>
-                </div>
-                <div class="card borrow" onclick="navigate('page-borrow', 'Borrow')">
-                    <p>Total Borrowed</p>
-                    <h3 id="total-borrow">₹ 0</h3>
-                </div>
-            </div>
-        </div>
+<header>
+<button class="header-left-btn" id="backBtn" onclick="goBack()">←</button>
+<button class="header-left-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙</button>
+<span id="header-title">Dashboard</span>
+<button class="header-add-btn" id="headerAddBtn" onclick="openModal()">+</button>
+</header>
 
-        <div id="page-lend" class="page">
-            <div class="category-summary">
-                <p>Total Lend</p>
-                <h2 id="tab-total-lend" class="amount lend">₹ 0</h2>
-            </div>
-            <div class="list-container" id="lend-list"></div>
-        </div>
+<div class="page-wrapper">
 
-        <div id="page-borrow" class="page">
-            <div class="category-summary">
-                <p>Total Borrowed</p>
-                <h2 id="tab-total-borrow" class="amount borrow">₹ 0</h2>
-            </div>
-            <div class="list-container" id="borrow-list"></div>
-        </div>
+<div id="page-home" class="page active">
+<div class="net-balance">
+<p>Net Balance</p>
+<h2 id="total-net">₹0</h2>
+</div>
+<div class="dashboard-cards">
+<div class="card lend" onclick="navigate('page-lend','Lend')">
+<p>Total Lend</p><h3 id="total-lend">₹0</h3>
+</div>
+<div class="card borrow" onclick="navigate('page-borrow','Borrow')">
+<p>Total Borrowed</p><h3 id="total-borrow">₹0</h3>
+</div>
+</div>
+</div>
 
-        <div id="page-details" class="page">
-            <div class="person-summary">
-                <h2 id="detail-name">Name</h2>
-                <p id="detail-status-text">Pending: <strong class="amount" id="detail-amount">₹ 0</strong></p>
-            </div>
-            <div class="action-buttons">
-                <button class="btn-action btn-return" id="btn-return-action" onclick="openModal('Return Money')">Log Return</button>
-                <button class="btn-action btn-new-entry" onclick="openModal('Add Entry')">Add Entry</button>
-            </div>
-            <div class="list-container">
-                <h4 style="margin-bottom: 10px; color: var(--text-muted);">Transaction History</h4>
-                <div id="details-history-list"></div>
-            </div>
-        </div>
-    </div>
+<div id="page-lend" class="page">
+<div class="category-summary">
+<p>Total Lend</p><h2 id="tab-total-lend" class="amount lend">₹0</h2>
+</div>
+<div class="list-container" id="lend-list"></div>
+</div>
 
-    <div id="action-modal" class="modal-overlay" onclick="closeModal(event, 'action-modal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 id="modal-title" style="margin-bottom: 20px; font-size: 1.4rem;">Add New</h3>
-            
-            <div class="form-group" id="name-group">
-                <label>Person's Name</label>
-                <input type="text" id="input-name" placeholder="e.g. Rohan">
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <div class="form-group" style="flex: 1;">
-                    <label>Amount (₹)</label>
-                    <input type="number" id="input-amount" placeholder="0.00">
-                </div>
-                <div class="form-group" style="flex: 1;" id="method-group">
-                    <label>Method</label>
-                    <select id="input-method">
-                        <option>Cash</option><option>GPay</option><option>Paytm</option><option>PhonePe</option><option>UPI</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group" id="date-group">
-                <label>Date</label>
-                <input type="date" id="input-date">
-            </div>
-            <div class="form-group" id="remarks-group">
-                <label>Remarks (Optional)</label>
-                <input type="text" id="input-remarks" placeholder="e.g. Dinner, Rent, etc.">
-            </div>
-            <button class="btn-submit" id="submit-btn" onclick="confirmSave()">Save Details</button>
-        </div>
-    </div>
+<div id="page-borrow" class="page">
+<div class="category-summary">
+<p>Total Borrowed</p><h2 id="tab-total-borrow" class="amount borrow">₹0</h2>
+</div>
+<div class="list-container" id="borrow-list"></div>
+</div>
 
-    <div id="save-confirm-modal" class="modal-overlay" onclick="closeModal(event, 'save-confirm-modal')">
-        <div class="modal-content" onclick="event.stopPropagation()" style="text-align: center;">
-            <h3 style="margin-bottom: 15px; color: var(--net-color);">Confirm Save</h3>
-            <p style="margin-bottom: 25px; color: var(--text-muted);">Are you sure you want to save this entry?</p>
-            <button class="btn-submit return" onclick="executeSave()">Yes, Save</button>
-            <button class="btn-submit" style="background: var(--add-btn-bg); color: var(--text-main);" onclick="closeModalDirect('save-confirm-modal')">Cancel</button>
-        </div>
-    </div>
-
-    <div id="delete-modal" class="modal-overlay" onclick="closeModal(event, 'delete-modal')">
-        <div class="modal-content" onclick="event.stopPropagation()" style="text-align: center;">
-            <h3 style="margin-bottom: 15px; color: var(--danger);">Confirm Delete</h3>
-            <p id="delete-text" style="margin-bottom: 25px; color: var(--text-muted);">Are you sure?</p>
-            <button class="btn-submit delete" onclick="executeDelete()">Yes, Delete</button>
-            <button class="btn-submit" style="background: var(--add-btn-bg); color: var(--text-main);" onclick="closeModalDirect('delete-modal')">Cancel</button>
-        </div>
-    </div>
+</div>
 </div>
 
 <script>
-    let appData = JSON.parse(localStorage.getItem('financeTrackerData')) || { lend: [], borrow: [] };
-    let historyStack = ['page-home'];
-    
-    let currentCategory = '';     
-    let currentPersonId = null; 
-    let currentAction = '';       
-    let editingTransactionId = null;
-    let deletingItem = { type: '', personId: null, transId: null };
+let appData=JSON.parse(localStorage.getItem('financeTrackerData'))||{lend:[],borrow:[]};
+let historyStack=['page-home'];
 
-    function init() {
-        document.getElementById('input-date').valueAsDate = new Date();
-        loadThemePreference();
-        renderDashboard();
-    }
+function formatCurrency(a){
+return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR'}).format(a);
+}
 
-    function loadThemePreference() {
-        const savedTheme = localStorage.getItem('financeTrackerTheme');
-        const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-            document.body.classList.add('dark-theme');
-            document.getElementById('themeToggleBtn').innerText = '☀️';
-        }
-    }
+function animateValue(el,start,end,duration=600){
+let startTime=null;
+function step(timestamp){
+if(!startTime)startTime=timestamp;
+let progress=Math.min((timestamp-startTime)/duration,1);
+let value=Math.floor(progress*(end-start)+start);
+el.innerText=formatCurrency(value);
+if(progress<1)requestAnimationFrame(step);
+}
+requestAnimationFrame(step);
+}
 
-    function toggleTheme() {
-        document.body.classList.toggle('dark-theme');
-        const isDark = document.body.classList.contains('dark-theme');
-        localStorage.setItem('financeTrackerTheme', isDark ? 'dark' : 'light');
-        document.getElementById('themeToggleBtn').innerText = isDark ? '☀️' : '🌙';
-    }
+function calculateBalance(arr){
+return arr.reduce((t,p)=>{
+return t+p.transactions.reduce((s,x)=>x.type==='primary'?s+x.amount:s-x.amount,0);
+},0);
+}
 
-    function saveToStorage() {
-        localStorage.setItem('financeTrackerData', JSON.stringify(appData));
-        renderDashboard();
-        if (historyStack[historyStack.length - 1] === 'page-lend' || historyStack[historyStack.length - 1] === 'page-borrow') {
-            renderList(historyStack[historyStack.length - 1] === 'page-lend' ? 'lend' : 'borrow');
-        }
-        if (historyStack[historyStack.length - 1] === 'page-details') {
-            renderDetails();
-        }
-    }
+function renderDashboard(){
+let lend=calculateBalance(appData.lend);
+let borrow=calculateBalance(appData.borrow);
+animateValue(document.getElementById('total-lend'),0,lend);
+animateValue(document.getElementById('total-borrow'),0,borrow);
+animateValue(document.getElementById('total-net'),0,Math.abs(lend-borrow));
+document.getElementById('tab-total-lend').innerText=formatCurrency(lend);
+document.getElementById('tab-total-borrow').innerText=formatCurrency(borrow);
+}
 
-    function generateId() { return Math.random().toString(36).substr(2, 9); }
+function renderList(category){
+let list=document.getElementById(category+'-list');
+list.innerHTML='';
+if(!appData[category].length){
+list.innerHTML='<div class="empty-state">No entries yet</div>';return;}
+appData[category].forEach((p,index)=>{
+let bal=p.transactions.reduce((s,x)=>x.type==='primary'?s+x.amount:s-x.amount,0);
+list.innerHTML+=`
+<div class="list-item" style="animation-delay:${index*60}ms">
+<span>${p.name}</span>
+<span class="amount ${category}">${formatCurrency(bal)}</span>
+</div>`;
+});
+}
 
-    function renderDashboard() {
-        let totalLend = 0, totalBorrow = 0;
+function navigate(id,title){
+let current=historyStack[historyStack.length-1];
+document.getElementById(current).classList.remove('active');
+document.getElementById(id).classList.add('active');
+historyStack.push(id);
+document.getElementById('header-title').innerText=title;
+if(id==='page-lend'){renderList('lend');}
+if(id==='page-borrow'){renderList('borrow');}
+}
 
-        appData.lend.forEach(person => {
-            person.transactions.forEach(t => {
-                if(t.type === 'primary') totalLend += t.amount;
-                if(t.type === 'return') totalLend -= t.amount;
-            });
-        });
+function goBack(){
+if(historyStack.length<=1)return;
+let current=historyStack.pop();
+document.getElementById(current).classList.remove('active');
+let prev=historyStack[historyStack.length-1];
+document.getElementById(prev).classList.add('active');
+document.getElementById('header-title').innerText='Dashboard';
+}
 
-        appData.borrow.forEach(person => {
-            person.transactions.forEach(t => {
-                if(t.type === 'primary') totalBorrow += t.amount;
-                if(t.type === 'return') totalBorrow -= t.amount;
-            });
-        });
-
-        const net = totalLend - totalBorrow;
-        
-        document.getElementById('total-lend').innerText = `₹ ${totalLend}`;
-        document.getElementById('total-borrow').innerText = `₹ ${totalBorrow}`;
-        
-        const tabTotalLendEl = document.getElementById('tab-total-lend');
-        if (tabTotalLendEl) tabTotalLendEl.innerText = `₹ ${totalLend}`;
-        
-        const tabTotalBorrowEl = document.getElementById('tab-total-borrow');
-        if (tabTotalBorrowEl) tabTotalBorrowEl.innerText = `₹ ${totalBorrow}`;
-        
-        const netEl = document.getElementById('total-net');
-        netEl.innerText = `₹ ${Math.abs(net)}`;
-        document.querySelector('.net-balance').style.background = net >= 0 ? 'var(--net-color)' : 'var(--danger)';
-    }
-
-    function calculatePersonBalance(person) {
-        return person.transactions.reduce((total, t) => {
-            return t.type === 'primary' ? total + t.amount : total - t.amount;
-        }, 0);
-    }
-
-    function renderList(category) {
-        currentCategory = category;
-        const listEl = document.getElementById(`${category}-list`);
-        listEl.innerHTML = '';
-
-        if (appData[category].length === 0) {
-            listEl.innerHTML = '<div class="empty-state">No entries yet. Tap + to add.</div>';
-            return;
-        }
-
-        appData[category].forEach(person => {
-            const balance = calculatePersonBalance(person);
-            const colorClass = category === 'lend' ? 'lend' : 'borrow';
-            
-            listEl.innerHTML += `
-                <div class="list-item">
-                    <div class="list-item-content" onclick="openDetails('${person.id}')">
-                        <span class="name">${person.name}</span>
-                        <span class="amount ${colorClass}">₹ ${balance}</span>
-                    </div>
-                    <div class="item-actions">
-                        <button class="icon-btn delete" onclick="confirmDelete('person', '${person.id}', null, '${person.name}')">🗑️</button>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    function openDetails(personId) {
-        currentPersonId = personId;
-        renderDetails();
-        navigate('page-details', 'Details');
-    }
-
-    function renderDetails() {
-        const person = appData[currentCategory].find(p => p.id === currentPersonId);
-        if (!person) return goBack();
-
-        const balance = calculatePersonBalance(person);
-        const colorClass = currentCategory === 'lend' ? 'lend' : 'borrow';
-
-        document.getElementById('detail-name').innerText = person.name;
-        document.getElementById('detail-amount').innerText = `₹ ${balance}`;
-        document.getElementById('detail-amount').className = `amount ${colorClass}`;
-        
-        document.getElementById('detail-status-text').innerHTML = currentCategory === 'lend' 
-            ? `Pending: <strong class="amount lend" id="detail-amount">₹ ${balance}</strong>`
-            : `You Owe: <strong class="amount borrow" id="detail-amount">₹ ${balance}</strong>`;
-
-        document.getElementById('btn-return-action').innerText = currentCategory === 'lend' ? 'Log Return' : 'Log Repayment';
-
-        const historyList = document.getElementById('details-history-list');
-        historyList.innerHTML = '';
-
-        person.transactions.forEach(t => {
-            const isReturn = t.type === 'return';
-            const tColor = isReturn ? 'return' : colorClass;
-            const prefix = isReturn ? '- ' : '';
-            const typeText = isReturn ? (currentCategory === 'lend' ? 'Money Returned' : 'Repaid') : (currentCategory === 'lend' ? 'Lend Money' : 'Borrowed Money');
-            
-            const remarksHtml = t.remarks ? `<div class="transaction-remarks">Note: ${t.remarks}</div>` : '';
-
-            historyList.innerHTML += `
-                <div class="list-item">
-                    <div class="list-item-content">
-                        <div>
-                            <span class="name">${typeText}</span>
-                            <div class="transaction-sub">
-                                <span>${t.date}</span>
-                                <span class="badge">${t.method}</span>
-                            </div>
-                            ${remarksHtml}
-                        </div>
-                        <span class="amount ${tColor}">${prefix}₹ ${t.amount}</span>
-                    </div>
-                    <div class="item-actions">
-                        <button class="icon-btn edit" onclick="openEditEntry('${t.id}')">✏️</button>
-                        <button class="icon-btn delete" onclick="confirmDelete('transaction', '${person.id}', '${t.id}', 'this entry')">🗑️</button>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    // --- NEW: Validation and Save Confirmation ---
-    function confirmSave() {
-        const amountInput = parseFloat(document.getElementById('input-amount').value);
-        if (isNaN(amountInput) || amountInput <= 0) {
-            alert("Please enter a valid amount greater than 0.");
-            return;
-        }
-
-        const isDetailsPage = historyStack[historyStack.length - 1] === 'page-details';
-        if (currentAction === 'Add Entry' && !isDetailsPage) {
-            const nameInput = document.getElementById('input-name').value.trim();
-            if (!nameInput) {
-                alert("Please enter a name.");
-                return;
-            }
-        }
-
-        // If validation passes, show the confirmation modal
-        document.getElementById('save-confirm-modal').classList.add('active');
-    }
-
-    // --- UPDATED: Actual Save Execution (runs only if user clicks 'Yes, Save') ---
-    function executeSave() {
-        const amountInput = parseFloat(document.getElementById('input-amount').value);
-        const methodInput = document.getElementById('input-method').value;
-        const dateInput = document.getElementById('input-date').value;
-        const remarksInput = document.getElementById('input-remarks').value.trim();
-
-        const isDetailsPage = historyStack[historyStack.length - 1] === 'page-details';
-
-        if (currentAction === 'Add Entry') {
-            let targetPerson;
-            if (isDetailsPage) {
-                targetPerson = appData[currentCategory].find(p => p.id === currentPersonId);
-            } else {
-                const nameInput = document.getElementById('input-name').value.trim();
-                targetPerson = appData[currentCategory].find(p => p.name.toLowerCase() === nameInput.toLowerCase());
-                if (!targetPerson) {
-                    targetPerson = { id: generateId(), name: nameInput, transactions: [] };
-                    appData[currentCategory].push(targetPerson);
-                }
-            }
-            targetPerson.transactions.push({ id: generateId(), type: 'primary', amount: amountInput, date: dateInput, method: methodInput, remarks: remarksInput });
-        }
-        else if (currentAction === 'Return Money') {
-            const person = appData[currentCategory].find(p => p.id === currentPersonId);
-            person.transactions.push({ id: generateId(), type: 'return', amount: amountInput, date: dateInput, method: methodInput, remarks: remarksInput });
-        }
-        else if (currentAction === 'Edit Entry') {
-            const person = appData[currentCategory].find(p => p.id === currentPersonId);
-            const transaction = person.transactions.find(t => t.id === editingTransactionId);
-            transaction.amount = amountInput; 
-            transaction.date = dateInput; 
-            transaction.method = methodInput;
-            transaction.remarks = remarksInput;
-        }
-
-        saveToStorage();
-        closeModalDirect('save-confirm-modal');
-        closeModalDirect('action-modal');
-    }
-
-    function confirmDelete(type, personId, transId, name) {
-        deletingItem = { type, personId, transId };
-        document.getElementById('delete-text').innerText = `Are you sure you want to delete ${name}?`;
-        document.getElementById('delete-modal').classList.add('active');
-    }
-
-    function executeDelete() {
-        if (deletingItem.type === 'person') {
-            appData[currentCategory] = appData[currentCategory].filter(p => p.id !== deletingItem.personId);
-        } else if (deletingItem.type === 'transaction') {
-            const person = appData[currentCategory].find(p => p.id === deletingItem.personId);
-            person.transactions = person.transactions.filter(t => t.id !== deletingItem.transId);
-        }
-        saveToStorage();
-        closeModalDirect('delete-modal');
-    }
-
-    function updateHeaderButtons(pageId) {
-        if (pageId === 'page-home') {
-            document.getElementById('backBtn').style.display = 'none';
-            document.getElementById('themeToggleBtn').style.display = 'block';
-        } else {
-            document.getElementById('backBtn').style.display = 'block';
-            document.getElementById('themeToggleBtn').style.display = 'none';
-        }
-        document.getElementById('headerAddBtn').style.display = (pageId === 'page-lend' || pageId === 'page-borrow') ? 'block' : 'none';
-    }
-
-    function navigate(targetId, title) {
-        const currentId = historyStack[historyStack.length - 1];
-        if(currentId === targetId) return;
-
-        if(targetId === 'page-lend') renderList('lend');
-        if(targetId === 'page-borrow') renderList('borrow');
-
-        document.getElementById(currentId).classList.remove('active');
-        document.getElementById(currentId).classList.add('prev');
-        const targetPage = document.getElementById(targetId);
-        targetPage.classList.remove('prev');
-        targetPage.classList.add('active');
-
-        document.getElementById('header-title').innerText = title;
-        updateHeaderButtons(targetId);
-        historyStack.push(targetId);
-    }
-
-    function goBack() {
-        if (historyStack.length <= 1) return;
-        const currentId = historyStack.pop();
-        const prevId = historyStack[historyStack.length - 1];
-
-        document.getElementById(currentId).classList.remove('active');
-        const prevPage = document.getElementById(prevId);
-        prevPage.classList.remove('prev');
-        prevPage.classList.add('active');
-
-        let title = 'Dashboard';
-        if (prevId === 'page-lend') { title = 'Lend'; renderList('lend'); }
-        if (prevId === 'page-borrow') { title = 'Borrow'; renderList('borrow'); }
-        
-        document.getElementById('header-title').innerText = title;
-        updateHeaderButtons(prevId);
-    }
-
-    function openModal(actionType) {
-        currentAction = actionType;
-        const modal = document.getElementById('action-modal');
-        document.getElementById('modal-title').innerText = actionType;
-        
-        document.getElementById('input-name').value = '';
-        document.getElementById('input-amount').value = '';
-        document.getElementById('input-date').valueAsDate = new Date();
-        document.getElementById('input-method').selectedIndex = 0;
-        document.getElementById('input-remarks').value = '';
-
-        const nameGroup = document.getElementById('name-group');
-        const submitBtn = document.getElementById('submit-btn');
-        submitBtn.className = 'btn-submit';
-        submitBtn.innerText = 'Save Details';
-
-        const isDetailsPage = historyStack[historyStack.length - 1] === 'page-details';
-
-        if (actionType === 'Add Entry') {
-            nameGroup.style.display = isDetailsPage ? 'none' : 'block';
-        } else if (actionType === 'Edit Entry') {
-            nameGroup.style.display = 'none';
-            submitBtn.innerText = 'Update Entry';
-        } else if (actionType === 'Return Money') {
-            nameGroup.style.display = 'none';
-            submitBtn.className = 'btn-submit return';
-            submitBtn.innerText = 'Confirm Return';
-        }
-        
-        modal.classList.add('active');
-    }
-
-    function openEditEntry(transId) {
-        editingTransactionId = transId;
-        const person = appData[currentCategory].find(p => p.id === currentPersonId);
-        const t = person.transactions.find(t => t.id === transId);
-        
-        document.getElementById('input-amount').value = t.amount;
-        document.getElementById('input-method').value = t.method;
-        document.getElementById('input-date').value = t.date;
-        document.getElementById('input-remarks').value = t.remarks || '';
-        
-        openModal('Edit Entry');
-    }
-
-    function closeModal(event, modalId) {
-        if (event.target === document.getElementById(modalId)) closeModalDirect(modalId);
-    }
-    function closeModalDirect(modalId) {
-        document.getElementById(modalId).classList.remove('active');
-    }
-
-    init();
+renderDashboard();
 </script>
 
 </body>
