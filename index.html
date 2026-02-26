@@ -7,38 +7,18 @@
     <style>
         /* --- Base Variables & Light Theme Setup --- */
         :root {
-            --body-bg: #dfe6e9;
-            --bg-color: #f8f9fa; 
-            --text-main: #2d3436; 
-            --text-muted: #636e72;
-            --lend-color: #0984e3; 
-            --borrow-color: #d63031; 
-            --net-color: #00b894;
-            --card-bg: #ffffff; 
-            --border-radius: 16px; 
-            --danger: #ff7675; 
-            --edit: #74b9ff;
-            --input-bg: #f8f9fa;
-            --input-border: #dfe6e9;
-            --add-btn-bg: #f0f3f5;
-            --add-btn-active: #dfe6e9;
-            --border-line: #eee;
+            --body-bg: #dfe6e9; --bg-color: #f8f9fa; --text-main: #2d3436; --text-muted: #636e72;
+            --lend-color: #0984e3; --borrow-color: #d63031; --net-color: #00b894;
+            --card-bg: #ffffff; --border-radius: 16px; --danger: #ff7675; --edit: #74b9ff;
+            --input-bg: #f8f9fa; --input-border: #dfe6e9; --add-btn-bg: #f0f3f5;
+            --add-btn-active: #dfe6e9; --border-line: #eee;
         }
 
         /* --- Dark Theme Variables --- */
         body.dark-theme {
-            --body-bg: #000000;
-            --bg-color: #121212;
-            --text-main: #f5f6fa;
-            --text-muted: #a4b0be;
-            --card-bg: #1e1e1e;
-            --input-bg: #2d2d2d;
-            --input-border: #444;
-            --add-btn-bg: #2d2d2d;
-            --add-btn-active: #444;
-            --border-line: #333;
-            --lend-color: #74b9ff; 
-            --borrow-color: #ff7675;
+            --body-bg: #000000; --bg-color: #121212; --text-main: #f5f6fa; --text-muted: #a4b0be;
+            --card-bg: #1e1e1e; --input-bg: #2d2d2d; --input-border: #444; --add-btn-bg: #2d2d2d;
+            --add-btn-active: #444; --border-line: #333; --lend-color: #74b9ff; --borrow-color: #ff7675;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -69,20 +49,15 @@
         }
         
         .header-left-btn {
-            position: absolute; left: 15px; background: none; border: none;
-            font-size: 1.5rem; color: var(--text-main); cursor: pointer;
-            padding: 10px; display: flex; align-items: center; justify-content: center;
-            transition: transform 0.2s;
+            position: absolute; left: 15px; background: none; border: none; font-size: 1.5rem; color: var(--text-main); 
+            cursor: pointer; padding: 10px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;
         }
         .header-left-btn:active { transform: scale(0.9); }
         #backBtn { display: none; }
 
         .header-add-btn {
-            position: absolute; right: 15px; 
-            background: var(--add-btn-bg); 
-            border: none; font-size: 1.8rem; color: var(--text-main); 
-            cursor: pointer; display: none; width: 40px; height: 40px; 
-            border-radius: 12px; line-height: 38px; text-align: center; padding: 0;
+            position: absolute; right: 15px; background: var(--add-btn-bg); border: none; font-size: 1.8rem; color: var(--text-main); 
+            cursor: pointer; display: none; width: 40px; height: 40px; border-radius: 12px; line-height: 38px; text-align: center; padding: 0;
             transition: background-color 0.4s ease, transform 0.1s, color 0.4s ease;
         }
         .header-add-btn:active { background: var(--add-btn-active); transform: scale(0.95); }
@@ -90,8 +65,7 @@
         /* --- Page Animations --- */
         .page-wrapper { position: relative; flex: 1; overflow: hidden; }
         .page {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg-color); transform: translateX(100%);
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-color); transform: translateX(100%);
             transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.4s ease;
             overflow-y: auto; padding-bottom: 30px; display: none; flex-direction: column;
         }
@@ -100,35 +74,29 @@
 
         /* --- Homepage Dashboard --- */
         .net-balance {
-            margin: 20px; padding: 30px 20px; background: var(--net-color);
-            color: white; border-radius: var(--border-radius); text-align: center;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            margin: 20px; padding: 30px 20px; background: var(--net-color); color: white; border-radius: var(--border-radius); 
+            text-align: center; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         }
         .net-balance h2 { font-size: 2.5rem; margin-top: 5px; font-weight: 700; }
         .dashboard-cards { display: flex; gap: 15px; padding: 0 20px; }
         .card {
-            flex: 1; padding: 25px 15px; border-radius: var(--border-radius);
-            background: var(--card-bg); text-align: center; cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.1s, background-color 0.4s ease;
+            flex: 1; padding: 25px 15px; border-radius: var(--border-radius); background: var(--card-bg); text-align: center; 
+            cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.1s, background-color 0.4s ease;
         }
         .card:active { transform: scale(0.96); }
         .card h3 { font-size: 1.4rem; margin-top: 8px; }
         .card.lend h3 { color: var(--lend-color); }
         .card.borrow h3 { color: var(--borrow-color); }
 
-        /* --- Category Summaries (Inside Tabs) --- */
-        .category-summary {
-            background: var(--card-bg); padding: 25px 20px; text-align: center;
-            border-bottom: 1px solid var(--border-line); margin-bottom: 10px;
-        }
+        /* --- Category Summaries --- */
+        .category-summary { background: var(--card-bg); padding: 25px 20px; text-align: center; border-bottom: 1px solid var(--border-line); margin-bottom: 10px; }
         .category-summary p { color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px; }
         .category-summary h2 { font-size: 2.2rem; }
 
         /* --- Lists & Items --- */
         .list-container { padding: 20px; }
         .list-item {
-            background: var(--card-bg); padding: 16px; border-radius: 12px;
-            margin-bottom: 12px; display: flex; justify-content: space-between;
+            background: var(--card-bg); padding: 16px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between;
             align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); 
         }
         .list-item-content { flex: 1; cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
@@ -188,7 +156,6 @@
     <header>
         <button class="header-left-btn" id="backBtn" onclick="goBack()">&#8592;</button>
         <button class="header-left-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙</button>
-        
         <span id="header-title">Dashboard</span>
         <button class="header-add-btn" id="headerAddBtn" onclick="openModal('Add Entry')">+</button>
     </header>
@@ -271,7 +238,16 @@
                 <label>Remarks (Optional)</label>
                 <input type="text" id="input-remarks" placeholder="e.g. Dinner, Rent, etc.">
             </div>
-            <button class="btn-submit" id="submit-btn" onclick="saveData()">Save Details</button>
+            <button class="btn-submit" id="submit-btn" onclick="confirmSave()">Save Details</button>
+        </div>
+    </div>
+
+    <div id="save-confirm-modal" class="modal-overlay" onclick="closeModal(event, 'save-confirm-modal')">
+        <div class="modal-content" onclick="event.stopPropagation()" style="text-align: center;">
+            <h3 style="margin-bottom: 15px; color: var(--net-color);">Confirm Save</h3>
+            <p style="margin-bottom: 25px; color: var(--text-muted);">Are you sure you want to save this entry?</p>
+            <button class="btn-submit return" onclick="executeSave()">Yes, Save</button>
+            <button class="btn-submit" style="background: var(--add-btn-bg); color: var(--text-main);" onclick="closeModalDirect('save-confirm-modal')">Cancel</button>
         </div>
     </div>
 
@@ -350,11 +326,9 @@
 
         const net = totalLend - totalBorrow;
         
-        // Update Dashboard Cards
         document.getElementById('total-lend').innerText = `₹ ${totalLend}`;
         document.getElementById('total-borrow').innerText = `₹ ${totalBorrow}`;
         
-        // Update Category Tab Headers
         const tabTotalLendEl = document.getElementById('tab-total-lend');
         if (tabTotalLendEl) tabTotalLendEl.innerText = `₹ ${totalLend}`;
         
@@ -456,13 +430,33 @@
         });
     }
 
-    function saveData() {
+    // --- NEW: Validation and Save Confirmation ---
+    function confirmSave() {
+        const amountInput = parseFloat(document.getElementById('input-amount').value);
+        if (isNaN(amountInput) || amountInput <= 0) {
+            alert("Please enter a valid amount greater than 0.");
+            return;
+        }
+
+        const isDetailsPage = historyStack[historyStack.length - 1] === 'page-details';
+        if (currentAction === 'Add Entry' && !isDetailsPage) {
+            const nameInput = document.getElementById('input-name').value.trim();
+            if (!nameInput) {
+                alert("Please enter a name.");
+                return;
+            }
+        }
+
+        // If validation passes, show the confirmation modal
+        document.getElementById('save-confirm-modal').classList.add('active');
+    }
+
+    // --- UPDATED: Actual Save Execution (runs only if user clicks 'Yes, Save') ---
+    function executeSave() {
         const amountInput = parseFloat(document.getElementById('input-amount').value);
         const methodInput = document.getElementById('input-method').value;
         const dateInput = document.getElementById('input-date').value;
         const remarksInput = document.getElementById('input-remarks').value.trim();
-
-        if (isNaN(amountInput) || amountInput <= 0) return alert("Enter a valid amount");
 
         const isDetailsPage = historyStack[historyStack.length - 1] === 'page-details';
 
@@ -472,7 +466,6 @@
                 targetPerson = appData[currentCategory].find(p => p.id === currentPersonId);
             } else {
                 const nameInput = document.getElementById('input-name').value.trim();
-                if (!nameInput) return alert("Enter a name");
                 targetPerson = appData[currentCategory].find(p => p.name.toLowerCase() === nameInput.toLowerCase());
                 if (!targetPerson) {
                     targetPerson = { id: generateId(), name: nameInput, transactions: [] };
@@ -495,6 +488,7 @@
         }
 
         saveToStorage();
+        closeModalDirect('save-confirm-modal');
         closeModalDirect('action-modal');
     }
 
@@ -567,7 +561,6 @@
         const modal = document.getElementById('action-modal');
         document.getElementById('modal-title').innerText = actionType;
         
-        // Reset all fields
         document.getElementById('input-name').value = '';
         document.getElementById('input-amount').value = '';
         document.getElementById('input-date').valueAsDate = new Date();
